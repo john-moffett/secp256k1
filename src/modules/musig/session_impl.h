@@ -679,7 +679,8 @@ int secp256k1_musig_partial_sign(const secp256k1_context* ctx, secp256k1_musig_p
     ret = secp256k1_musig_secnonce_load(ctx, k, &pk, secnonce);
     /* Set nonce to zero to avoid nonce reuse. This will cause subsequent calls
      * of this function to fail */
-    memset(secnonce, 0, sizeof(*secnonce));
+    secp256k1_memclear(secnonce, sizeof(*secnonce));
+
     if (!ret) {
         secp256k1_musig_partial_sign_clear(&sk, k);
         return 0;

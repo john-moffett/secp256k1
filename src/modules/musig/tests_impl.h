@@ -400,7 +400,9 @@ static void musig_api_tests(void) {
 
     memcpy(&secnonce_tmp, &secnonce[0], sizeof(secnonce_tmp));
     CHECK(secp256k1_musig_partial_sign(CTX, &partial_sig[0], &secnonce_tmp, &keypair[0], &keyagg_cache, &session) == 1);
-    /* The secnonce is set to 0 and subsequent signing attempts fail */
+    /* The secnonce is set to 0 and subsequent signing attempts fail.
+     * Redefine memory first as secp256k1_musig_partial_sign securely clears and undefines the bytes.*/
+    SECP256K1_CHECKMEM_DEFINE(&secnonce_tmp, sizeof(secnonce_tmp));
     CHECK(secp256k1_memcmp_var(&secnonce_tmp, zeros132, sizeof(secnonce_tmp)) == 0);
     CHECK_ILLEGAL(CTX, secp256k1_musig_partial_sign(CTX, &partial_sig[0], &secnonce_tmp, &keypair[0], &keyagg_cache, &session));
     memcpy(&secnonce_tmp, &secnonce[0], sizeof(secnonce_tmp));
